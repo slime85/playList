@@ -16,8 +16,12 @@ const $alert = document.querySelector("#alert");
 const $text = document.querySelector("#text");
 const $accept = document.querySelector("#accept");
 const $cancel = document.querySelector("#cancel");
+const $korean = document.querySelector("#korean");
+const $$input = document.querySelectorAll("input");
+const $keydown = document.querySelector("#keydown");
 let playList = [];
 let alertType = "";
+let korean = false;
 
 const inputWidth = e => {
 
@@ -31,6 +35,12 @@ const alert = text => {
   alertType = text;
   $alert.classList.remove("none");
 
+}
+
+const changeKorean = e => {
+  if(korean) {
+    console.log(koreanKey(e));
+  }
 }
 
 const inputText = e => {
@@ -165,6 +175,12 @@ const cancle = e => {
 
 }
 
+const koreanCheck = e => {
+
+  korean = $korean.checked;
+
+}
+
 const init = e => {
 
   $titleInput.value = localStorage.getItem("playList-title") === null ? "부른 노래 목록" : localStorage.getItem("playList-title");
@@ -179,6 +195,8 @@ const init = e => {
   $subTitleInput.style.width = `${340 - $subTitleText.offsetWidth}px`;
   $contentInput.style.width = `${340 - $contentText.offsetWidth}px`;
 
+  $$input.forEach(el => el.addEventListener("keydown", changeKorean));
+
   $titleInput.addEventListener("input", inputText);
   $subTitleInput.addEventListener("input", inputText);
   $contentInput.addEventListener("input", inputText);
@@ -189,6 +207,11 @@ const init = e => {
   $dataLoad.addEventListener("click", e => {alert("load")});
   $accept.addEventListener("click", accept);
   $cancel.addEventListener("click", cancle);
+  $korean.addEventListener("input", koreanCheck);
+  document.addEventListener("keydown", e => {
+    console.log(e.key);
+    $keydown.innerText = e.key;
+  })
 
 }
 

@@ -15,7 +15,8 @@ body{background: #626262;}
 
 #controller{position: absolute; right: 100px; top: 100px; border: #fffa 2px solid; background: #666; color: #fff; padding: 10px; font-size: 22px; width: 350px;}
 #controller>p{margin-bottom: 10px; display: flex;}
-#controller input{font-size: 22px; color: #fff; background: none; border: 2px solid #fff; outline: none; width: 0; margin-left: 5px;}
+#controller input[type="text"]{font-size: 22px; color: #fff; background: none; border: 2px solid #fff; outline: none; width: 0; margin-left: 5px;}
+#controller input[type="checkbox"]{width: 20px; height: 20px; margin: 8px 7px 0;}
 #dataSave, #dataLoad, #reset{cursor: pointer; background: #fff5; margin: 3px; display: inline-block; padding: 3px 5px; margin-top: 10px; cursor: pointer;}
 
 #alert{position: absolute; border: #fffa 2px solid; background: #666; font-size: 20px; padding: 10px; left: 50%; bottom: -100%; transform: translateX(-50%);}
@@ -23,3 +24,5 @@ body{background: #626262;}
 #buttons{display: flex;}
 #buttons>div{background: #fff5; padding: 3px 5px; cursor: pointer;}
 #buttons>div+div{margin-left: 10px;}
+
+#keydown{position: absolute; left: 50%; top: 20%; transform: translateX(-50%); width: 100px; height: 30px; text-align: center; line-height: 30px; border: 1px solid #fff; color: #fff;}
