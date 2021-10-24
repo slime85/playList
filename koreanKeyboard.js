@@ -30,13 +30,12 @@ const keyList = {
 const f = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ','ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ','ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
 const s = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ','ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ','ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
 const t = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ','ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ','ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ','ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+const ds = ['ㅘ', 'ㅙ', 'ㅚ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅢ'];
 const dt = ['ㄳ', 'ㄵ', 'ㄶ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅄ'];
 
-let prevWord; // consonant = 자음, vowel = 모음, double = 겹받침
-let prevWordCode;
 let prevText;
 let prevInput;
-let keyPushed = {ctrl: false};
+let korean = false;
 
 const koreanKey = e => {
   const key = e.key;
@@ -143,12 +142,28 @@ const getConsonant = key => {
   return result;
 }
 
+const getVowel = key => {
+  let result = {};
+
+  if(key === 'ㅘ') result = {val: "ㅗ", s: "ㅏ"};
+  else if(key === 'ㅙ') result = {val: "ㅗ", s: "ㅐ"};
+  else if(key === 'ㅚ') result = {val: "ㅗ", s: "ㅣ"};
+  else if(key === 'ㅝ') result = {val: "ㅜ", s: "ㅓ"};
+  else if(key === 'ㅞ') result = {val: "ㅜ", s: "ㅔ"};
+  else if(key === 'ㅟ') result = {val: "ㅜ", s: "ㅣ"};
+  else if(key === 'ㅢ') result = {val: "ㅡ", s: "ㅣ"};
+  else result.val = key;
+
+  return result;
+}
+
 const enToKo = e => {
   const target = e.target;
   const key = e.key;
   let value = target.value;
   let last = value.slice(-1, value.length);
-  if(key.match(/^[a-z]$/i) && !keyPushed.ctrl) {
+
+  if(key.match(/^[a-z]$/i) && !e.ctrlKey) {
     e.preventDefault();
     const koKey = koreanKey(e)
     if(value === "" || last.match(/[^ㄱ-힣]/) || prevInput !== e.target || prevText !== last) {
@@ -198,9 +213,10 @@ const enToKo = e => {
             value = value.slice(0, value.length - 1) + prevText;
           }
         }else {
-          console.log("test");
           if(spe.f === undefined) {
             if(dt.indexOf(last) !== -1) {
+              const con = getConsonant(last);
+
               prevText = combinationKorean(con.f, koKey);
               value = value.slice(0, value.length - 1) + con.val + prevText;
             }else if(last.match(/[ㄱ-ㅎ]/)) {
@@ -235,21 +251,54 @@ const enToKo = e => {
       }
     }
   }else if(key === "Backspace"){
-    if(last === prevText && key.match(/^[a-z]$/i) && !keyPushed.ctrl) {
+    if(last === prevText && !e.ctrlKey) {
       e.preventDefault();
       if(last.match(/[ㄱ-ㅎ]/)) {
         if(dt.indexOf(last) !== -1) {
-
+          const con = getConsonant(last);
+          prevText = con.val
+          value = value.slice(0, value.length - 1) + prevText;
         }else {
           prevText = key;
           value = value.slice(0, value.length - 1);
+        }
+      }else if(last.match(/[ㅏ-ㅣ]/)) {
+        if(ds.indexOf(last) !== -1) {
+          const con = getVowel(last );
+          prevText = con.val;
+          value = value.slice(0, value.length - 1) + prevText;
+        }else {
+          prevText = key;
+          value = value.slice(0, value.length - 1);
+        }
+      }else {
+        let spe = getConstantVowel(last);
+
+        if(spe.t === "") {
+          if(ds.indexOf(spe.s) !== -1) {
+            const con = getVowel(spe.s);
+            prevText = combinationKorean(spe.f, con.val);
+            value = value.slice(0, value.length - 1) + prevText;
+          }else {
+            prevText = spe.f;
+            value = value.slice(0, value.length - 1) + prevText;
+          }
+        }else {
+          if(dt.indexOf(spe.t) !== -1) {
+            const con = getConsonant(spe.t);
+            prevText = combinationKorean(spe.f, spe.s, con.val);
+            value = value.slice(0, value.length - 1) + prevText;
+          }else {
+            prevText = combinationKorean(spe.f, spe.s);
+            value = value.slice(0, value.length - 1) + prevText;
+          }
         }
       }
     }else {
       prevText = key;
     }
   }else {
-    prevText = key;
+    if(key !== "Control" && key !== "Shift") prevText = key;
   }
   prevInput = e.target;
 
@@ -257,13 +306,8 @@ const enToKo = e => {
 }
 
 document.addEventListener("keydown", e => {
-  if(e.key === "Control") {
-    keyPushed.ctrl = true;
-  }
-})
-
-document.addEventListener("keyup", e => {
-  if(e.key === "Control") {
-    keyPushed.ctrl = false;
+  if(e.ctrlKey && e.key === "Alt") {
+    if(korean) korean = false;
+    else korean = true;
   }
 })

@@ -22,7 +22,6 @@ const $$input = document.querySelectorAll("input[type='text']");
 // const $idx = document.querySelector("#idx");
 let playList = [];
 let alertType = "";
-let korean = false;
 
 const inputWidth = e => {
   $input.style.width = `${$content.offsetWidth + 100}px`;
@@ -191,5 +190,11 @@ const init = e => {
     // $keydown.innerText = e.key;
   })
 }
+
+document.addEventListener("keydown", e => {
+  if(e.ctrlKey && e.key === "Alt") {
+    $korean.checked = korean;
+  }
+})
 
 init();

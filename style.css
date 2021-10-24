@@ -24,6 +24,7 @@ body{background: #626262;}
 #buttons{display: flex;}
 #buttons>div{background: #fff5; padding: 3px 5px; cursor: pointer;}
 #buttons>div+div{margin-left: 10px;}
+.small{font-size: 14px; padding-top: 10px;}
 
 #keydown{position: absolute; left: 50%; top: 20%; transform: translateX(-50%); width: 100px; height: 30px; text-align: center; line-height: 30px; border: 1px solid #fff; color: #fff;}
 #idx{position: absolute; left: 50%; top: 30%; transform: translateX(-50%); width: 100px; height: 30px; text-align: center; line-height: 30px; border: 1px solid #fff; color: #fff;}
